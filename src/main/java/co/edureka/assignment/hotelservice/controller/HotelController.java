@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +26,13 @@ public class HotelController {
     private Link linkToHotels = linkTo(methodOn(this.getClass()).getHotels(null, null)).withRel("hotels");
 
     @GetMapping(path = "/hotels")
-    public ResponseEntity getHotels(Pageable pageable, PagedResourcesAssembler assembler) {
-        return new ResponseEntity(assembler.toResource(hotelService.getHotels(pageable)), HttpStatus.OK);
+    public ResponseEntity<PagedResources<?>> getHotels(Pageable pageable, PagedResourcesAssembler<Hotel> assembler) {
+        return new ResponseEntity<PagedResources<?>>(assembler.toResource(hotelService.getHotels(pageable)), HttpStatus.OK);
     }
 
     @PostMapping(path = "/hotels")
-    public ResponseEntity addHotel(@RequestBody Hotel hotel) {
-        return new ResponseEntity(
-                new Resource(hotelService.addHotel(hotel), linkToHotels), null, HttpStatus.CREATED);
+    public ResponseEntity<Resource<Hotel>> addHotel(@RequestBody Hotel hotel) {
+        return new ResponseEntity<Resource<Hotel>>(
+                new Resource<Hotel>(hotelService.addHotel(hotel), linkToHotels), null, HttpStatus.CREATED);
     }
 }
